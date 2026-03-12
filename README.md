@@ -24,7 +24,7 @@ The original MRI data (in NIfTI `.nii.gz` format) is required to run the code. D
 ## Project Architecture
 
 ```text
-brain-tumor-segmentation/
+brain_tumor_segmentation_matlab/
 │
 ├── main.m                      % Main pipeline script
 ├── data_exploration.m          % Interactive tool (2D Slider and 3D Rendering) for EDA
