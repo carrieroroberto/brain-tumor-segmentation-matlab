@@ -11,7 +11,7 @@ The goal of this repository is to implement and compare two paradigms for the au
 1. **Seeded Region Growing** (similarity-based approach).
 2. **Marker-Controlled Watershed** (topographic approach).
 
-The entire pipeline is developed in **MATLAB** without the use of neural networks (Deep Learning) or machine learning, to demonstrate the robustness of classic processing algorithms.
+The entire pipeline is developed in **MATLAB** (2025b version) without the use of neural networks (Deep Learning) or machine learning, to demonstrate the robustness of classic processing algorithms.
 
 ## Dataset Download
 The original MRI data (in NIfTI `.nii.gz` format) is required to run the code. Due to file size constraints, they are not included directly in this repository.
