@@ -1,5 +1,4 @@
 function img_filtered = denoising(img, method)
-    
     switch method
         case "median"
             img_filtered = medfilt2(img, [3 3]);
@@ -10,5 +9,4 @@ function img_filtered = denoising(img, method)
         otherwise
             error("Metodo non riconosciuto. Usare median o gaussian");
     end
-
 end
