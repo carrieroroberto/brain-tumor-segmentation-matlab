@@ -1,48 +1,35 @@
 function [seed_point, marker_int, marker_ext, img_roi] = otsu_initialization(img)
-    thresholds = multithresh(img, 4);
-    quantized = imquantize(img, thresholds);
-    all_bright_spots = (quantized >= 4);
-    
-    se_break = strel('disk', 4);
-    broken_spots = imopen(all_bright_spots, se_break);
-    stats = regionprops(broken_spots, img, 'Area', 'MeanIntensity', 'PixelIdxList', 'Solidity');
-    
-    if isempty(stats)
-        se_break = strel('disk', 2);
-        broken_spots = imopen(all_bright_spots, se_break);
-        stats = regionprops(broken_spots, img, 'Area', 'MeanIntensity', 'PixelIdxList', 'Solidity');
+    % 1. Calcola la soglia solo sulla parte attiva (ignorando lo sfondo nero)
+    active_pixels = img(img > 0.05);
+    if isempty(active_pixels)
+        level = 0.1;
+    else
+        level = graythresh(active_pixels);
     end
-    
-    if isempty(stats)
-        se_break = strel('disk', 1);
-        broken_spots = all_bright_spots;
-        stats = regionprops(broken_spots, img, 'Area', 'MeanIntensity', 'PixelIdxList', 'Solidity');
-    end
-    
-    scores = [stats.Area] .* [stats.MeanIntensity] .* ([stats.Solidity].^2);
-    [~, target_idx] = max(scores);
-    
-    temp_mask = false(size(img));
-    temp_mask(stats(target_idx).PixelIdxList) = true;
-    temp_mask = imfill(temp_mask, 'holes');
-    
-    core_mask = imerode(temp_mask, strel('disk', 3));
-    if sum(core_mask(:)) == 0
-        core_mask = temp_mask;
-    end
-    
-    idx = find(core_mask);
-    [r, c] = ind2sub(size(img), idx(round(end/2)));
+
+    % 2. Binarizzazione: Questo è il nucleo di sicurezza del tumore
+    bin_mask = img > level;
+    bin_mask = bwareafilt(logical(bin_mask), 1); % Tieni solo la massa più grande
+    bin_mask = imfill(bin_mask, 'holes');
+
+    % 3. Trova il punto più profondo/centrale per il Seme
+    dist_map = bwdist(~bin_mask);
+    [~, max_idx] = max(dist_map(:));
+    [r, c] = ind2sub(size(img), max_idx);
     seed_point = [r, c];
+
+    % 4. Marker per il Watershed
+    marker_int = imerode(bin_mask, strel('disk', 3));
+    if sum(marker_int(:)) == 0
+        marker_int = bin_mask;
+    end
     
-    tumor_mask = bwselect(broken_spots, c, r, 4);
-    tumor_mask = imdilate(tumor_mask, se_break);
-    tumor_mask = imfill(tumor_mask, 'holes');
-    tumor_mask = tumor_mask & all_bright_spots;
-    
+    % Il marker esterno è il cervello sano (che ora ha valori bassissimi ma > 0)
+    marker_ext = (img < (level * 0.3)) & (img > 0); 
+
+    % 5. Preparazione ROI per il Region Growing
+    % Diamo un "cuscinetto" attorno al tumore, spegnendo il resto
+    roi_mask = imdilate(bin_mask, strel('disk', 15));
     img_roi = img;
-    img_roi(~tumor_mask) = 0;
-    
-    marker_int = imerode(tumor_mask, strel('disk', 3));
-    marker_ext = ~imdilate(tumor_mask, strel('disk', 15)) & (img > 0.05);
+    img_roi(~roi_mask) = 0;
 end

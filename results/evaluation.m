@@ -1,14 +1,34 @@
 function stats = evaluation(mask_pred, mask_gt)
-    mask_pred = logical(mask_pred);
-    mask_gt = logical(mask_gt);
+    P = logical(mask_pred);
+    G = logical(mask_gt);
     
-    TP = sum(mask_pred & mask_gt, 'all');
-    FP = sum(mask_pred & ~mask_gt, 'all');
-    FN = sum(~mask_pred & mask_gt, 'all');
+    TP = sum(P(:) & G(:));
+    FP = sum(P(:) & ~G(:));
+    FN = sum(~P(:) & G(:));
+    TN = sum(~P(:) & ~G(:));
     
-    stats.dice = (2 * TP) / (2 * TP + FP + FN);
+    if (sum(P(:)) + sum(G(:))) == 0
+        stats.dice = 1; 
+    else
+        stats.dice = (2 * TP) / (2 * TP + FP + FN);
+    end
     
-    stats.iou = TP / (TP + FP + FN);
+    if (TP + FN) == 0
+        stats.recall = 1;
+    else
+        stats.recall = TP / (TP + FN);
+    end
     
-    stats.sensitivity = TP / (TP + FN);
+    if (TP + FP) == 0
+        stats.precision = 1;
+    else
+        stats.precision = TP / (TP + FP);
+    end
+    
+    totale_pixel = TP + TN + FP + FN;
+    if totale_pixel == 0
+        stats.accuracy = 1;
+    else
+        stats.accuracy = (TP + TN) / totale_pixel;
+    end
 end
