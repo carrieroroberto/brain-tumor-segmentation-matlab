@@ -1,114 +1,88 @@
+% =========================================================================
+% PROGETTO DI IMAGE PROCESSING (6 CFU) - SEGMENTAZIONE TUMORI CEREBRALI
+% Pipeline State-of-the-Art: Region Growing vs Marker-Controlled Watershed
+% =========================================================================
 clear; clc; close all;
-addpath(genpath(pwd));
 
-img_dir = "dataset/Task01_BrainTumour/imagesTr/";
-gt_dir  = "dataset/Task01_BrainTumour/labelsTr/";
-out_plot_dir = "results/plots/";
+img_dir = 'dataset/Task01_BrainTumour/imagesTr/';
+lbl_dir = 'dataset/Task01_BrainTumour/labelsTr/';
+output_path = 'results/';
 
-if ~exist(out_plot_dir, 'dir')
-    mkdir(out_plot_dir);
+if ~exist(output_path, 'dir'), mkdir(output_path); end
+
+files = dir(fullfile(img_dir, '*.nii.gz'));
+num_files = length(files);
+
+if num_files == 0
+    error('Nessun file trovato. Controlla il percorso: %s', img_dir);
 end
 
-files = dir(fullfile(img_dir, "BRATS_*.nii.gz"));
-num_pazienti = length(files);
+% Inizializzazione Array Metriche
+metrics = struct('dice_rg', zeros(num_files,1), 'sens_rg', zeros(num_files,1), 'prec_rg', zeros(num_files,1), ...
+                 'dice_ws', zeros(num_files,1), 'sens_ws', zeros(num_files,1), 'prec_ws', zeros(num_files,1));
 
-if num_pazienti == 0
-    error("Nessun file trovato.");
-end
+fprintf('=== AVVIO PIPELINE DI ELABORAZIONE AVANZATA ===\n');
 
-dice_rg_all = zeros(num_pazienti, 1);
-recall_rg_all = zeros(num_pazienti, 1);
-prec_rg_all = zeros(num_pazienti, 1);
-acc_rg_all = zeros(num_pazienti, 1);
+for i = 1:num_files
+    try
+        name_img = fullfile(img_dir, files(i).name);
+        name_gt  = fullfile(lbl_dir, files(i).name); 
+        clean_name = strrep(files(i).name, '.nii.gz', '');
 
-dice_ws_all = zeros(num_pazienti, 1);
-recall_ws_all = zeros(num_pazienti, 1);
-prec_ws_all = zeros(num_pazienti, 1);
-acc_ws_all = zeros(num_pazienti, 1);
+        % MODULO 1: Preprocessing Aggressivo
+        [I_proc, mask_gt, I_orig, I_seed_map, prep_steps] = preprocessing(name_img, name_gt);
 
-valid_count = 0; 
+        % MODULO 2: Segmentazione (Otsu -> Custom RG -> WS)
+        [mask_rg_raw, mask_ws_raw] = segmentation(I_proc, I_seed_map);
 
-for i = 1:num_pazienti
-    base_name = files(i).name;
-    fileName = fullfile(img_dir, base_name);
-    gtName   = fullfile(gt_dir, base_name);
-    
-    fprintf("[%d/%d] Elaborazione Fusion: %s... ", i, num_pazienti, base_name);
-    
-    [img_2d, mask_gt] = data_loader(fileName, gtName);
-    
-    if isempty(img_2d)
-        fprintf("Saltato.\n");
-        continue; 
+        % MODULO 3: Postprocessing Morfologico
+        mask_rg = postprocessing(mask_rg_raw);
+        mask_ws = postprocessing(mask_ws_raw);
+
+        % MODULO 4: Calcolo Metriche (Dice, Sensitivity/Recall, Precision)
+        % Metriche Region Growing
+        TP_rg = sum(mask_rg(:) & mask_gt(:));
+        FP_rg = sum(mask_rg(:) & ~mask_gt(:));
+        FN_rg = sum(~mask_rg(:) & mask_gt(:));
+        
+        metrics.dice_rg(i) = (2 * TP_rg) / (2 * TP_rg + FP_rg + FN_rg + eps);
+        metrics.sens_rg(i) = TP_rg / (TP_rg + FN_rg + eps);
+        metrics.prec_rg(i) = TP_rg / (TP_rg + FP_rg + eps);
+
+        % Metriche Watershed
+        TP_ws = sum(mask_ws(:) & mask_gt(:));
+        FP_ws = sum(mask_ws(:) & ~mask_gt(:));
+        FN_ws = sum(~mask_ws(:) & mask_gt(:));
+        
+        metrics.dice_ws(i) = (2 * TP_ws) / (2 * TP_ws + FP_ws + FN_ws + eps);
+        metrics.sens_ws(i) = TP_ws / (TP_ws + FN_ws + eps);
+        metrics.prec_ws(i) = TP_ws / (TP_ws + FP_ws + eps);
+
+        % Stampa a schermo per singolo paziente
+        fprintf('[%d/%d] %s | RG -> Dice: %.3f, Sens: %.3f, Prec: %.3f | WS -> Dice: %.3f\n', ...
+            i, num_files, clean_name, metrics.dice_rg(i), metrics.sens_rg(i), metrics.prec_rg(i), metrics.dice_ws(i));
+
+        % MODULO 5: Plotting (Salva le immagini per TUTTI i pazienti per analisi robusta)
+        %save_file = fullfile(output_path, sprintf('%s_analysis.png', clean_name));
+        %plotting(I_orig, mask_gt, mask_rg, mask_ws, metrics.dice_rg(i), metrics.dice_ws(i), prep_steps, clean_name, save_file);
+
+    catch ME
+        fprintf('[%d/%d] ERRORE su %s: %s\n', i, num_files, files(i).name, ME.message);
     end
-    
-    img_median = denoising(img_2d, 'median');
-    
-    [seed_pt, m_int, m_ext, img_roi] = otsu_initialization(img_median);
-    
-    active_pixels = img_median(img_median > 0.05);
-    if isempty(active_pixels)
-        otsu_level = 0.1;
-    else
-        otsu_level = graythresh(active_pixels);
-    end
-    
-    seed_val = img_median(seed_pt(1), seed_pt(2));
-    tolleranza_dinamica = max(0.05, seed_val - otsu_level);
-    
-    mask_rg_raw = region_growing(img_roi, seed_pt, tolleranza_dinamica);
-    mask_ws_raw = marked_watershed(img_roi, m_int, m_ext);
-    
-    mask_rg_clean = refinement(mask_rg_raw);
-    mask_ws_clean = refinement(mask_ws_raw);
-    
-    stats_rg = evaluation(mask_rg_clean, mask_gt);
-    stats_ws = evaluation(mask_ws_clean, mask_gt);
-    
-    valid_count = valid_count + 1;
-    
-    dice_rg_all(valid_count)   = stats_rg.dice;
-    recall_rg_all(valid_count) = stats_rg.recall;
-    prec_rg_all(valid_count)   = stats_rg.precision;
-    acc_rg_all(valid_count)    = stats_rg.accuracy;
-    
-    dice_ws_all(valid_count)   = stats_ws.dice;
-    recall_ws_all(valid_count) = stats_ws.recall;
-    prec_ws_all(valid_count)   = stats_ws.precision;
-    acc_ws_all(valid_count)    = stats_ws.accuracy;
-    
-    [~, name_temp, ~] = fileparts(base_name); 
-    [~, clean_name, ~]  = fileparts(name_temp); 
-    save_file = fullfile(out_plot_dir, clean_name + ".png");
-    
-    plot_manager(img_2d, mask_rg_clean, mask_ws_clean, mask_gt, clean_name, save_file);
-    
-    fprintf("Analizzato. (Dice RG: %.2f | Precision: %.2f | Recall: %.2f)\n", ...
-            stats_rg.dice, stats_rg.precision, stats_rg.recall);
 end
 
-dice_rg_all = dice_rg_all(1:valid_count);
-recall_rg_all = recall_rg_all(1:valid_count);
-prec_rg_all = prec_rg_all(1:valid_count);
-acc_rg_all = acc_rg_all(1:valid_count);
+% Stampa Statistiche Finali
+fprintf('\n================ RISULTATI GLOBALI ================\n');
+fprintf('REGION GROWING (Custom):\n');
+fprintf(' - Dice Score Medio:  %.4f\n', mean(metrics.dice_rg, 'omitnan'));
+fprintf(' - Sensitivity Media: %.4f\n', mean(metrics.sens_rg, 'omitnan'));
+fprintf(' - Precision Media:   %.4f\n', mean(metrics.prec_rg, 'omitnan'));
+fprintf('---------------------------------------------------\n');
+fprintf('WATERSHED (Marker-Controlled):\n');
+fprintf(' - Dice Score Medio:  %.4f\n', mean(metrics.dice_ws, 'omitnan'));
+fprintf(' - Sensitivity Media: %.4f\n', mean(metrics.sens_ws, 'omitnan'));
+fprintf(' - Precision Media:   %.4f\n', mean(metrics.prec_ws, 'omitnan'));
+fprintf('===================================================\n');
 
-dice_ws_all = dice_ws_all(1:valid_count);
-recall_ws_all = recall_ws_all(1:valid_count);
-prec_ws_all = prec_ws_all(1:valid_count);
-acc_ws_all = acc_ws_all(1:valid_count);
-
-fprintf('\n==================================================\n');
-fprintf('  RISULTATI GLOBALI DATASET (%d pazienti validi)\n', valid_count);
-fprintf('==================================================\n');
-fprintf('REGION GROWING (Media):\n');
-fprintf('  > Dice Score: %.4f\n', mean(dice_rg_all));
-fprintf('  > Precision:  %.4f\n', mean(prec_rg_all));
-fprintf('  > Recall:     %.4f\n', mean(recall_rg_all));
-fprintf('  > Accuracy:   %.4f\n', mean(acc_rg_all));
-fprintf('--------------------------------------------------\n');
-fprintf('WATERSHED (Media):\n');
-fprintf('  > Dice Score: %.4f\n', mean(dice_ws_all));
-fprintf('  > Precision:  %.4f\n', mean(prec_ws_all));
-fprintf('  > Recall:     %.4f\n', mean(recall_ws_all));
-fprintf('  > Accuracy:   %.4f\n', mean(acc_ws_all));
-fprintf('==================================================\n\n');
+% Salvataggio vettori nel workspace
+%save(fullfile(output_path, 'risultati_finali.mat'), 'metrics');
