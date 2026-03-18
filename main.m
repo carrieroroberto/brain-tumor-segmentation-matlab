@@ -40,17 +40,17 @@ for i = 1:num_files
     % salva il nome del paziente nella struct
     metrics(i).paziente = filename;
 
-    % 1. preprocessing
+    % preprocessing
     [imgs_proc, mask_gt, seed_map, prep] = pre_processing(path_img, path_gt);
     
-    % 2. segmentazione e post-processing
+    % segmentazione e post-processing
     flair_mask = post_processing(segmentation(imgs_proc.flair, seed_map));
     t1c_mask = post_processing(segmentation(imgs_proc.t1c, seed_map));
     t2_mask = post_processing(segmentation(imgs_proc.t2, seed_map));
     fus2_mask = post_processing(segmentation(imgs_proc.fus2, seed_map));
     fus3_mask = post_processing(segmentation(imgs_proc.fus3, seed_map));
 
-    % 3. calcolo metriche
+    % calcolo metriche
     [flair_dice, flair_sens, flair_prec] = evaluation(flair_mask, mask_gt);
     [t1c_dice, t1c_sens, t1c_prec] = evaluation(t1c_mask, mask_gt);
     [t2_dice, t2_sens, t2_prec] = evaluation(t2_mask, mask_gt);
@@ -82,11 +82,11 @@ for i = 1:num_files
     metrics(i).fus3_sens = fus3_sens;
     metrics(i).fus3_prec = fus3_prec;
 
-    % 4. stampa a schermo
+    % stampa nel terminale
     fprintf("[%03d/%03d] %s | FLAIR: %.3f | T1c: %.3f | T2: %.3f | FLAIR+T1c: %.3f | FLAIR+T1c+T2: %.3f\n", ...
             i, num_files, filename, flair_dice, t1c_dice, t2_dice, fus2_dice, fus3_dice);
 
-    % 5. generazione report visivo
+    % generazione report grafico
     save_path_fig = output_path + "plots/" + filename + "_results.png";
     masks_cell = {flair_mask, t1c_mask, t2_mask, fus2_mask, fus3_mask};
     dices_vec  = [flair_dice, t1c_dice, t2_dice, fus2_dice, fus3_dice];
@@ -96,7 +96,7 @@ end
 fprintf("\nGrafici salvati nella sotto-cartella 'plots'.");
 
 %% ---------------- CALCOLO METRICHE MEDIE ED ESPORTAZIONE ----------------
-% 1. esportazione metriche dettagliate per ogni immagine in CSV
+% esportazione metriche dettagliate per ogni immagine in CSV
 csv_detailed = fopen(output_path + "metrics/detailed.csv", "w");
 fprintf(csv_detailed, "filename,flair_dice,flair_sens,flair_prec,t1c_dice,t1c_sens,t1c_prec,t2_dice,t2_sens,t2_prec,fus2_dice,fus2_sens,fus2_prec,fus3_dice,fus3_sens,fus3_prec\n");
 
@@ -111,7 +111,7 @@ for i = 1:num_files
 end
 fclose(csv_detailed);
 
-% 2. calcolo delle medie globali per ciascuna sequenza
+% calcolo delle medie globali per ciascuna sequenza
 mean_flair = [mean([metrics.flair_dice]), mean([metrics.flair_sens]), mean([metrics.flair_prec])];
 mean_t1c   = [mean([metrics.t1c_dice]),   mean([metrics.t1c_sens]),   mean([metrics.t1c_prec])];
 mean_t2    = [mean([metrics.t2_dice]),    mean([metrics.t2_sens]),    mean([metrics.t2_prec])];
@@ -130,7 +130,7 @@ fclose(csv_global);
 
 fprintf("\nMetriche globali e per paziente salvate nella sotto-cartella 'metrics'.\n\n");
 
-% 3. stampa riepilogativa delle medie
+% stampa riepilogativa delle medie
 disp("=========================================== MEDIA DEI RISULTATI ===========================================");
 fprintf("FLAIR                  | Dice Score: %.3f | Sensitivity: %.3f | Precision: %.3f\n", mean_flair(1), mean_flair(2), mean_flair(3));
 fprintf("T1c                    | Dice Score: %.3f | Sensitivity: %.3f | Precision: %.3f\n", mean_t1c(1), mean_t1c(2), mean_t1c(3));

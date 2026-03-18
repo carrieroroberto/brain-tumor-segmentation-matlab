@@ -1,5 +1,4 @@
 function plotting(imgs_proc, mask_gt, masks, dices, filename, save_path)
-
 % File: plotting.m
 % Visualizza in una singola figura la segmentazione di immagini MRI multi-sequenza.
 % Vengono mostrate la ground truth e le predizioni per le diverse sequenze, con titoli
