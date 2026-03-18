@@ -1,21 +1,18 @@
 function mask = region_growing(I, seedY, seedX, thresh)
-    % IMPLEMENTAZIONE FROM SCRATCH: Region Growing (Breadth-First Search)
+% REGION_GROWING: Implementazione "from scratch" tramite BFS e Queue statica.
+
     [rows, cols] = size(I);
     mask = false(rows, cols);
     visited = false(rows, cols);
     
-    % Pre-allocazione Coda (Queue) per efficienza in MATLAB
     max_pixels = rows * cols;
     Q_row = zeros(max_pixels, 1);
     Q_col = zeros(max_pixels, 1);
     
-    head = 1;
-    tail = 1;
+    head = 1; tail = 1;
     
-    Q_row(tail) = seedY;
-    Q_col(tail) = seedX;
+    Q_row(tail) = seedY; Q_col(tail) = seedX;
     tail = tail + 1;
-    
     mask(seedY, seedX) = true;
     visited(seedY, seedX) = true;
     
@@ -34,12 +31,9 @@ function mask = region_growing(I, seedY, seedX, thresh)
             if nY >= 1 && nY <= rows && nX >= 1 && nX <= cols
                 if ~visited(nY, nX)
                     visited(nY, nX) = true;
-                    
                     if I(nY, nX) > thresh
                         mask(nY, nX) = true;
-                        
-                        Q_row(tail) = nY;
-                        Q_col(tail) = nX;
+                        Q_row(tail) = nY; Q_col(tail) = nX;
                         tail = tail + 1;
                     end
                 end
