@@ -26,38 +26,27 @@ The original MRI data (in NIfTI `.nii.gz` format) is required to run the code. D
 ```text
 brain-tumor-segmentation-matlab/
 │
-├── main.m                      % Main pipeline script
-├── data_exploration.m          % Interactive tool (2D Slider and 3D Rendering) for EDA
-├── README.md                   % Project documentation
+├── main.m                      % main pipeline script: orchestrates the full preprocessing, segmentation, post-processing, and evaluation
+├── data_exploration.m          % interactive exploration tool with 2d slider and 3d rendering for dataset inspection
+├── README.md                   % project documentation, instructions, and overview
 │
-├── dataset/                    % Place NIfTI volumes here (e.g., brats_sample.nii.gz)
+├── dataset/                    % folder for input mri/nifti volumes (e.g., brats_sample.nii.gz)
 │
-├── results/                    % Automatically generated outputs
-│   ├── plots/                  % Comparison plots saved by plot_manager
-│   └── metrics/                % Numerical results (Dice Score) in CSV format
+├── results/                    % automatically generated outputs during execution
+│   ├── plots/                  % saved visualizations comparing original, preprocessed, and segmented images
+│   └── metrics/                % numerical evaluation results (e.g., dice score) in csv format
 │
-├── pre_processing/             % [PHASE 1] MRI signal cleaning
-│   ├── denoising.m             % Median Filter (edge-preserving)
-│   └── enhancement.m           % CLAHE for edema enhancement (FLAIR)
+├── src/                        % collection of matlab functions used in the analysis
+│   ├── pre_processing.m        % automatic marker and seed extraction using multi-level otsu thresholding
+│   ├── region_growing.m        % core region growing algorithm with morphological gradient and geodesic reconstruction
+│   ├── segmentation.m          % executes the region growing segmentation with 8-connectivity
+│   ├── post_processing.m       % refines segmentation output (noise removal, morphological operations)
+│   ├── evaluation.m            % computes evaluation metrics like dice coefficient, compares with ground truth
+│   └── plotting.m              % functions for generating plots and visualizations for analysis and results
 │
-├── segmentation/               % [PHASE 2] Algorithmic core
-│   ├── otsu_initialization.m   % Automatic Marker and Seed extraction (Multi-level Otsu)
-│   ├── region_growing.m        % Region Growing algorithm (8-connectivity)
-│   └── marked_watershed.m      % Morphological Gradient and Geodesic Reconstruction
-│
-├── post_processing/            % [PHASE 3] Refinement
-│   └── refinement.m            % Morphological operators (Opening, Closing, Hole Filling)
-│
-├── results_manager/            % Support tools
-│   ├── evaluation.m            % Calculation of Dice Similarity Coefficient (DSC)
-│   └── plot_manager.m          % Generation and export of high-resolution plots
-│
-└── deliverables/               % Final materials prepared for project submission
-    ├── presentation.pptx       % Project presentation slides
-    │
-    └── report/                 % Final written report and source files
-        ├── report.pdf          % Compiled version of the report
-        │
-        └── tex/                % LaTeX source used to generate the report
-            └── main.tex        % Main LaTeX document
+└── deliverables/               % materials prepared for submission
+    ├── presentation.pptx       % project presentation slides
+    └── report/                 % written report and source files
+        ├── report.pdf          % compiled pdf of the report
+        └── latex/              % latex source files used to generate the report
 ```
