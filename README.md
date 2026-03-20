@@ -22,7 +22,8 @@ The segmentation is achieved through a cascaded pipeline: **Multi-level Otsu Thr
 
 ## Running Instructions
 
-**Step 1: Dataset Download**
+**Step 1: Download Dataset**
+
 The original MRI data (in NIfTI `.nii.gz` format) is required to run the code. Due to file size constraints, they are not included directly in this repository.
 1. To download the dataset, visit the following shared OneDrive folder: **[Download Dataset](https://shorturl.at/3DwTw)**
 2. Download the required files.
