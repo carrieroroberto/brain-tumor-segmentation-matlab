@@ -91,7 +91,7 @@ for i = 1:num_files
     save_path_fig = output_path + "plots/" + filename + "_results.png";
     masks_cell = {flair_mask, t1c_mask, t2_mask, fus2_mask, fus3_mask};
     dices_vec = [flair_dice, t1c_dice, t2_dice, fus2_dice, fus3_dice];
-    plotting(imgs_proc, mask_gt, masks_cell, dices_vec, filename, save_path_fig);
+    %plotting(imgs_proc, mask_gt, masks_cell, dices_vec, filename, save_path_fig);
 end
 
 fprintf("\nGrafici salvati nella sotto-cartella 'plots'.");

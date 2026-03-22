@@ -66,11 +66,11 @@ function [imgs_proc, mask_gt, seed_map] = pre_processing(path_img, path_gt)
     imgs_proc.t1 = img_t1;
     imgs_proc.t1c = img_t1c;
     imgs_proc.t2 = img_t2;
-    imgs_proc.fus2 = (0.6 * img_fl) + (0.4 * img_t1c); % fusione bimodale
-    imgs_proc.fus3 = (0.5 * img_fl) + (0.3 * img_t1c) + (0.2 * img_t2); % fusione multimodale
+    imgs_proc.fus2 = 0.6*img_fl + 0.4*img_t1c; % fusione bimodale
+    imgs_proc.fus3 = 0.54*img_fl + 0.16*img_t1c + 0.30*img_t2; % fusione multimodale
 
     % generazione della seed map per il region growing
     % sfocatura gaussiana per facilitare l'individuazione del seme
-    seed_map = imgaussfilt(imgs_proc.fus3, 4);
+    seed_map = imgaussfilt(imgs_proc.fus3, 3);
 
 end
