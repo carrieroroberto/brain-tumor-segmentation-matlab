@@ -8,10 +8,10 @@
 % segmentazione, calcolo delle metriche e generazione dei report grafici.
 
 clear; clc; close all; % pulizia workspace, command window e figure
-warning("off", "all"); % disabilita i warning di sistema per mantenere pulito l'output in console
-addpath("src"); % aggiunge la cartella contenente le funzioni custom al percorso
+warning("off", "all"); % disabilita i warning di sistema per pulizia command window
+addpath("src"); % aggiunge la cartella contenente le funzioni custom al progetto
 
-% definizione dei percorsi contenenti i volumi e le etichette di ground truth
+% definizione dei percorsi contenenti i volumi e le ground truth
 img_dir = "dataset/Task01_BrainTumour/imagesTr/";
 gt_dir = "dataset/Task01_BrainTumour/labelsTr/";
 files = dir(img_dir + "*.nii.gz");
@@ -25,7 +25,6 @@ metrics(num_files) = struct( ...
 );
 
 disp("======================================== AVVIO ANALISI COMPARATIVA =========================================");
-
 for i = 1:num_files
     % impostazione dei percorsi specifici per il paziente corrente
     filename = files(i).name;
@@ -52,22 +51,27 @@ for i = 1:num_files
     [fus3_dice, fus3_sens, fus3_prec] = evaluation(fus3_mask, gt_mask);
     
     % archiviazione delle metriche calcolate all'interno della struct
+    % FLAIR
     metrics(i).flair_dice = flair_dice;
     metrics(i).flair_sens = flair_sens;
     metrics(i).flair_prec = flair_prec;
     
+    % T1c
     metrics(i).t1c_dice = t1c_dice;
     metrics(i).t1c_sens = t1c_sens;
     metrics(i).t1c_prec = t1c_prec;
     
+    % T2
     metrics(i).t2_dice = t2_dice;
     metrics(i).t2_sens = t2_sens;
     metrics(i).t2_prec = t2_prec;
     
+    % Fusion2 (FLAIR+T1c)
     metrics(i).fus2_dice = fus2_dice;
     metrics(i).fus2_sens = fus2_sens;
     metrics(i).fus2_prec = fus2_prec;
     
+    % Fusion3 (FLAIR+T1c+T2)
     metrics(i).fus3_dice = fus3_dice;
     metrics(i).fus3_sens = fus3_sens;
     metrics(i).fus3_prec = fus3_prec;
@@ -90,7 +94,7 @@ for i = 1:num_files
     % inizializzazione della figura (non visibile) per il rendering
     fig = figure("Visible", "off");
     for j = 1:6
-        % posizionamento e renderizzazione del subplot corrente
+        % posizionamento e rendering del subplot corrente
         subplot(2, 3, j);
         imshow(imgs{j}, []);
         hold on;
@@ -154,7 +158,7 @@ fprintf(csv_global, "fus2,%.3f,%.3f,%.3f\n", mean_fus2(1), mean_fus2(2), mean_fu
 fprintf(csv_global, "fus3,%.3f,%.3f,%.3f\n", mean_fus3(1), mean_fus3(2), mean_fus3(3));
 fclose(csv_global);
 
-% fase 6: stampa nella command windows delle medie finali
+% fase 6: stampa nella command window delle medie finali
 disp("=========================================== MEDIA DEI RISULTATI ===========================================");
 fprintf("FLAIR                  | Dice Score: %.3f | Sensitivity: %.3f | Precision: %.3f\n", mean_flair(1), mean_flair(2), mean_flair(3));
 fprintf("T1c                    | Dice Score: %.3f | Sensitivity: %.3f | Precision: %.3f\n", mean_t1c(1), mean_t1c(2), mean_t1c(3));

@@ -6,7 +6,7 @@ function [imgs_proc, mask_gt, seed_map] = pre_processing(path_img, path_gt, file
 % segmentazione.
 %
 % INPUT:
-% path_img - percorso al volume NIfTI
+% path_img - percorso al volume MRI da analizzare
 % path_gt - percorso alla ground truth
 % filename - identificativo del paziente
 %
@@ -23,8 +23,7 @@ function [imgs_proc, mask_gt, seed_map] = pre_processing(path_img, path_gt, file
     vol_4d = double(niftiread(path_img));
     vol_gt = double(niftiread(path_gt));
     
-    % calcolo dell'estensione del tumore per ogni slice e selezione di
-    % quella migliore
+    % calcolo dell'estensione del tumore per ogni slice e selezione della slice migliore
     slice_scores = squeeze(sum(sum(vol_gt > 0, 1), 2));
     [~, z_best] = max(slice_scores);
     

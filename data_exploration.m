@@ -1,17 +1,18 @@
 % File: data_exploration.m
-% Esegue l'Exploratory Data Analysis (EDA) su un singolo paziente rappresentativo.
-% Fornisce visualizzazioni delle immagini origiali (con e senza enhancement CLAHE)
+% Esegue l'Exploratory Data Analysis (EDA) su uno specifico paziente.
+% Fornisce visualizzazioni delle immagini origiali (prima/dopo enhancement CLAHE)
 % e degli istogrammi di intensità.
-% Inoltre, mostra il rendering interattivo del volume 3D e salva le figure
-% generate nel percorso specifico per il paziente scelto.
+% Mostra il rendering interattivo del volume 3D e salva le figure generate
+% nel percorso dedicato al paziente selezionato.
 
 clear; clc; close all; % pulizia workspace, command window e figure
+warning("off", "all"); % disabilita i warning di sistema per mantenere pulito l'output in console
 
-id = "006"; % identificativo del paziente campione per l'analisi
+id = "001"; % identificativo del paziente campione per l'analisi
 filename = "BRATS_" + id + ".nii.gz";
 path_img = "dataset/Task01_BrainTumour/imagesTr/" + filename;
 path_gt  = "dataset/Task01_BrainTumour/labelsTr/" + filename;
-slice = 78; % slice centrale scelta per la visualizzazione
+slice = 78; % slice centrale usata per la visualizzazione
 disp("Inizio analisi esplorativa sul paziente: " + filename);
 
 % percorso per il salvataggio delle figure
@@ -52,7 +53,7 @@ for i = 1:4
     ylabel("Numero Pixel");
 end
 sgtitle("Analisi Sequenze MRI - Paziente: " + filename);
-saveas(fig_raw, eda_dir + "raw_sequences.png");
+saveas(fig_raw, eda_dir + "Raw_sequences.png");
 
 fig_clahe = figure();
 for i = 1:4
@@ -72,7 +73,7 @@ for i = 1:4
     ylabel("Numero Pixel");
 end
 sgtitle("Analisi Sequenze MRI (CLAHE) - Paziente: " + filename);
-saveas(fig_clahe, eda_dir + "clahe_sequences.png");
+saveas(fig_clahe, eda_dir + "CLAHE_sequences.png");
 
 % figura 2: rendering del volume 3D sulla sequenza FLAIR
 volshow(vol_4d(:,:,:,1));
