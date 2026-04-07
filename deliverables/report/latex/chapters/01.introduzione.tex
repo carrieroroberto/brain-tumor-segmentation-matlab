@@ -3,19 +3,19 @@
 \section{Contesto e Motivazioni}
 I gliomi rappresentano la tipologia più frequente di tumore cerebrale negli adulti. La pianificazione di interventi chirurgici e di terapie richiede una conoscenza precisa delle caratteristiche della lesione. In tale contesto, la segmentazione delle immagini mediche consente di delineare i contorni tumorali rispetto al tessuto sano circostante~\cite{antonelli_medical_2022}.
 
-Attualmente, questa operazione viene eseguita manualmente da medici esperti. Tuttavia, la segmentazione manuale presenta alcune criticità, in quanto è un processo lento e fortemente soggetto all’interpretazione umana. I bordi dei gliomi, infatti, risultano spesso sfumati a causa del basso contrasto delle immagini radiologiche, causando ambiguità nella segmentazione di una stessa lesione da parte di diversi medici. Tale mancanza di riproducibilità rende necessario lo sviluppo di algoritmi capaci di automatizzare l'estrazione della regione tumorale in modo oggettivo e algoritmico~\cite{menze2015}.
+Questa operazione viene eseguita manualmente da medici esperti. Tuttavia, la segmentazione manuale presenta alcune criticità, in quanto è un processo lento e soggetto all’interpretazione umana. I bordi dei gliomi, infatti, risultano spesso sfumati a causa del basso contrasto delle immagini radiologiche, causando ambiguità nella segmentazione di una stessa lesione da parte di diversi medici. Tale mancanza di riproducibilità rende necessario lo sviluppo di algoritmi capaci di automatizzare l'estrazione della regione tumorale~\cite{menze2015}.
 
 \section{Obiettivi del Progetto}
-L’obiettivo principale del progetto consiste nell'implementazione di una pipeline per la segmentazione di tumori cerebrali, basata su tecniche tradizionali di \textit{Image Processing}, quali \textit{Otsu} multilivello, \textit{Region Growing} con seme automatico e \textit{Marker-Controlled Watershed}, organizzate secondo un flusso di elaborazione a cascata.
+L’obiettivo principale del progetto consiste nell'implementazione di una pipeline per la segmentazione di tumori cerebrali basata su tecniche tradizionali di \textit{Image Processing}, quali \textit{Otsu} multilivello, \textit{Region Growing} con seme automatico e \textit{Marker-Controlled Watershed}, organizzate secondo un flusso di elaborazione a cascata.
 
-La segmentazione consiste nella rilevazione di strutture di interesse all'interno delle immagini mediche. La letteratura recente privilegia spesso modelli di \textit{Deep Learning} che operano come \textit{black-box}, rendendo meno immediata l’interpretazione delle scelte di segmentazione.
+La segmentazione consiste nella rilevazione di strutture di interesse all'interno delle immagini mediche e la letteratura recente privilegia modelli di \textit{Deep Learning} che operano come \textit{black-box}, rendendo meno immediata l’interpretazione delle scelte di segmentazione.
 
-Pertanto, questo lavoro propone un approccio trasparente e deterministico in ambiente MATLAB, il cui focus sperimentale risiede nella validazione della fusione multimodale delle immagini rispetto all'utilizzo delle singole sequenze MRI (\textit{Magnetic Resonance Imaging}) in un contesto di segmentazione binaria bidimensionale.
-Attraverso l'analisi comparativa, si intende verificare l’ipotesi secondo cui la combinazione delle informazioni provenienti da diverse sequenze in input (\textit{FLAIR}, \textit{T1c} e  \textit{Fusion2}) consenta un miglioramento complessivo nell’identificazione del tumore.
+Pertanto, questo lavoro propone un approccio sperimentale, il cui focus risiede nella validazione della fusione multimodale delle immagini rispetto all'utilizzo delle singole sequenze MRI (\textit{Magnetic Resonance Imaging}) in un contesto di segmentazione binaria bidimensionale.
+Attraverso l'analisi comparativa, si intende verificare l’ipotesi secondo cui la combinazione delle informazioni provenienti da diverse sequenze in input (\textit{FLAIR}, \textit{T1c} e  \textit{T2}) consenta un miglioramento complessivo nell’identificazione del tumore.
 
-A seguito di una fase preliminare di esplorazione dei dati e di pre-processing, dai volumi tridimensionali vengono estratte le slice bidimensionali più significative.
+A seguito di una fase preliminare di esplorazione dei dati e di pre-processing, dai volumi tridimensionali vengono estratte le \textit{slice} bidimensionali più significative.
 
-Successivamente, tali immagini vengono elaborate confrontando sia le singole sequenze sia le configurazioni di fusione, bimodale e multimodale. Le maschere di segmentazione ottenute sono quindi sottoposte a una fase di post-processing morfologico, finalizzata al raffinamento dei risultati.
+Successivamente, tali immagini vengono elaborate confrontando sia le singole sequenze che le configurazioni di fusione bimodale e multimodale. Le maschere di segmentazione ottenute sono, quindi, sottoposte a una fase di post-processing morfologico, finalizzata al raffinamento dei risultati.
 
 Infine, vengono calcolate le metriche quantitative di segmentazione e generati i corrispondenti output grafici.
 
@@ -23,9 +23,9 @@ Infine, vengono calcolate le metriche quantitative di segmentazione e generati i
 Il documento è articolato nei seguenti capitoli, ciascuno dedicato a una specifica fase del lavoro:
 
 \begin{itemize}
-    \item Il \textbf{Capitolo 2} introduce il dataset utilizzato per l’analisi e vengono descritte le caratteristiche delle diverse sequenze di risonanza magnetica. Inoltre, viene illustrata la struttura dei volumi tridimensionali in formato NIfTI, la loro rappresentazione in slice bidimensionali e le modalità di gestione dei diversi pazienti presenti.
+    \item Il \textbf{Capitolo 2} introduce il dataset utilizzato per l’analisi e vengono descritte le caratteristiche delle diverse sequenze di risonanza magnetica. Inoltre, viene illustrata la struttura dei volumi tridimensionali in formato NIfTI, la loro rappresentazione in \textit{slice} bidimensionali e le modalità di gestione dei diversi pazienti presenti.
 
-    \item Il \textbf{Capitolo 3} descrive nel dettaglio la pipeline e presenta l’architettura modulare sviluppata in MATLAB, dal pre-processing e fusione delle sequenze, all’estrazione dei marker iniziali tramite sogliatura di Otsu multilivello per il Region Growing, fino all’output finale ottenuto mediante Marker-Controlled Watershed.
+    \item Il \textbf{Capitolo 3} descrive nel dettaglio la pipeline e presenta l’architettura modulare sviluppata in MATLAB, dal pre-processing e fusione delle sequenze, all’estrazione dei marker iniziali tramite sogliatura di \textit{Otsu} multilivello per il \textit{Region Growing}, fino all’output finale ottenuto mediante \textit{Marker-Controlled Watershed}.
 
     \item Il \textbf{Capitolo 4} definisce le metriche di valutazione utilizzate e discute i risultati ottenuti mediante tabelle e grafici comparativi, con un’analisi approfondita sia dei casi caratterizzati da prestazioni elevate sia di quelli con risultati insoddisfacenti, indagandone le possibili cause.
 

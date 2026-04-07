@@ -4,14 +4,14 @@ La pipeline di segmentazione di tumori cerebrali in immagini MRI con tecniche cl
 Nel complesso, è stato valutato come l'utilizzo di tecniche tradizionali di segmentazione possano fornire risultati significativi, nonostante l'adozione predominante di tecniche di \textit{Deep Learning} e Reti Neurali Convoluzionali (CNN) come stato dell'arte attuale.
 
 \section{Limiti Strutturali}
-L’analisi dei casi migliori ha mostrato che la pipeline funziona bene quando la lesione presenta una morfologia compatta e un contrasto netto rispetto al tessuto circostante. In tali condizioni, la combinazione delle diverse modalità consente di ottenere contorni aderenti alla ground truth e di limitare la presenza di falsi positivi.
+L’analisi dei casi migliori ha mostrato che la pipeline funziona bene quando la lesione presenta una morfologia compatta e un contrasto netto rispetto al tessuto circostante. In tali condizioni, la combinazione delle diverse modalità consente di ottenere contorni aderenti alla \textit{ground truth} e di limitare la presenza di falsi positivi.
 
 Al contrario, i casi peggiori hanno messo in evidenza alcune fragilità del metodo. In particolare, la multimodalità pur essendo mediamente vantaggiosa non garantisce automaticamente un miglioramento in ogni paziente, poichè se una delle sequenze contribuisce in modo non coerente alla rappresentazione finale, essa può influenzare negativamente la sogliatura iniziale, la scelta del seme e l’intera segmentazione.
 
 \section{Sviluppi Futuri}
 Tra gli sviluppi futuri, è possibile valutare strategie di fusione multimodale più avanzate rispetto alla combinazione lineare pesata, così da valorizzare il contributo delle diverse sequenze MRI.
 
-Inoltre, sarebbe opportuno passare da una segmentazione bidimensionale basata sulle singole slice a un approccio tridimensionale sull’intero volume MRI, per sfruttare in modo più completo la continuità della lesione.
+Inoltre, sarebbe opportuno passare da una segmentazione bidimensionale basata sulle singole \textit{slice} a un approccio tridimensionale sull’intero volume MRI, per sfruttare in modo più completo la continuità della lesione.
 
 Infine, si potrebbero confrontare le tecniche adottate in questo lavoro con altri metodi classici di Image Processing, al fine di valutarne vantaggi, limiti e possibili integrazioni rispetto alla soluzione proposta. Per lo scopo, si citano le seguenti alternative.
 

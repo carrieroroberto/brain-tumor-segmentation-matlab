@@ -1,28 +1,28 @@
 \chapter{Dataset e Sequenze MRI}
-In questo capitolo viene presentato il dataset utilizzato nel progetto, in riferimento alle caratteristiche delle sequenze di risonanza magnetica impiegate nella pipeline di elaborazione.
-La comprensione delle proprietà delle diverse modalità di acquisizione è infatti fondamentale per interpretare le informazioni contenute nelle immagini e per implementare correttamente gli algoritmi di segmentazione.
+In questo capitolo viene presentato il dataset utilizzato nel progetto, in riferimento alle caratteristiche delle sequenze di risonanza magnetica impiegate.
+La comprensione delle loro proprietà è, infatti, fondamentale per interpretare le informazioni contenute nelle immagini e per implementare correttamente gli algoritmi di segmentazione.
 
 \section{Dataset BraTS (Medical Segmentation Decathlon)}
-Per l'analisi è stato impiegato il dataset BraTS (\textit{Brain Tumor Segmentation Benchmark 2016/2017}), che rappresenta uno standard di riferimento nella comunità scientifica per la valutazione di algoritmi di segmentazione automatica in ambito medicale~\cite{menze2015}. Nello specifico, contiene volumi MRI multimodali annotati da medici esperti.
+Per l'analisi è stato utilizzato il dataset BraTS (\textit{Brain Tumor Segmentation Benchmark 2016/2017}), che rappresenta uno standard di riferimento nella comunità scientifica per la valutazione di algoritmi di segmentazione automatica in ambito medicale~\cite{menze2015}. Nello specifico, contiene volumi MRI multimodali annotati da medici esperti.
 
 Il dataset è disponibile pubblicamente sulla piattaforma \textit{Medical Segmentation Decathlon} (MSD)\footnote{\url{http://medicaldecathlon.com/}}, una competizione progettata per valutare le prestazioni di diversi algoritmi di \textit{Image Processing} su molteplici task~\cite{antonelli_medical_2022}.
 
-Per il lavoro proposto, è stata utilizzata la task \textit{Task01\_BrainTumor}, relativa alla segmentazione di gliomi cerebrali.
+Per il lavoro proposto, è stata impiegata la task \textit{Task01\_BrainTumor}, relativa alla segmentazione di gliomi cerebrali.
 
 Dal punto di vista strutturale, il dataset è organizzato in tre sottoinsiemi principali:
 \begin{itemize}
     \item \textbf{imagesTr}: contiene i volumi MRI dei pazienti utilizzati per il training;
-    \item \textbf{labelsTr}: contiene le corrispondenti ground truth annotate manualmente dai medici;
+    \item \textbf{labelsTr}: contiene le corrispondenti \textit{ground truth} annotate manualmente dai medici;
     \item \textbf{imagesTs}: contiene i volumi di test, senza annotazioni.
 \end{itemize}
 
-Nel presente lavoro sono stati utilizzati esclusivamente i dati annotati (\textit{imagesTr} e \textit{labelsTr}), così da valutare le prestazioni della pipeline mediante confronto diretto con la ground truth. Il sottoinsieme di test non è stato considerato, poiché tipicamente destinato alla validazione di approcci di \textit{Machine Learning}.
+Nel presente lavoro sono stati utilizzati esclusivamente i dati annotati (\textit{imagesTr} e \textit{labelsTr}), così da valutare le prestazioni della pipeline mediante confronto diretto con la \textit{ground truth}. Il sottoinsieme di test non è stato considerato, poiché tipicamente destinato alla validazione di approcci di \textit{Machine Learning}.
 
 Il dataset di training comprende 484 pazienti, ciascuno identificato da un file in formato \textit{.nii.gz} contenente un volume multimodale. Ogni volume è rappresentato come un tensore quadridimensionale, in cui le prime tre dimensioni corrispondono allo spazio tridimensionale dell'immagine, mentre la quarta dimensione rappresenta le diverse sequenze MRI acquisite.
 
 Nella versione MSD, i volumi sono stati ricampionati al fine di ottenere una risoluzione spaziale con \textit{voxel} (pixel volumetrici) di $1 \times 1 \times 1$ mm ed è stato effettuato lo \textit{skull-stripping}, ovvero la rimozione del cranio dall'acquisizione. Inoltre, le diverse modalità MRI sono state normalizzate in intensità e posizionate nello stesso sistema di riferimento spaziale. A seguito di tali operazioni, tutti i volumi presentano dimensioni uniformi di $240 \times 240 \times 155$ voxel e un numero di \textit{slice} pari a 155 per tutti i pazienti.
 
-Le annotazioni di riferimento (ground truth) sono fornite come maschere segmentate, in cui i voxel sono etichettati secondo diverse classi patologiche, tra cui \textit{edema peritumorale}, \textit{core tumorale non-enhancing} (necrotico) e \textit{tumore enhancing} (attivo), oltre allo sfondo. Nella pipeline, tali etichette sono state binarizzate per ottenere una segmentazione di tipo tumore/non-tumore, per semplificarne l'implementazione.
+Le annotazioni di riferimento sono fornite come maschere segmentate, in cui i voxel sono etichettati secondo diverse classi patologiche, tra cui \textit{edema peritumorale}, \textit{core tumorale non-enhancing} (necrotico) e \textit{tumore enhancing} (attivo), oltre allo sfondo. Nella pipeline, tali etichette sono state binarizzate per ottenere una segmentazione di tipo tumore/non-tumore, per semplificarne l'implementazione.
 
 \section{Sequenze MRI}
 Ogni modalità di risonanza magnetica presenta specifiche proprietà di contrasto, che evidenziano differenti caratteristiche dei tessuti e della struttura della lesione ~\cite{menze2015}.
@@ -47,12 +47,12 @@ Questa proprietà permette al mezzo di contrasto di accumularsi nei tessuti, ren
 \subsection{T2-pesata (T2)}
 Le immagini \textit{T2} pesate sono sensibili al contenuto di acqua nei tessuti. Di conseguenza, le regioni contenenti liquidi, come il liquido cerebrospinale o gli edemi, appaiono iperintense.
 
-Tale sequenza contribuisce nell'individuazione dell’estensione della lesione, ma è meno specifica rispetto alla sequenza \textit{T1} con mezzo di contrasto, in quanto non consente di distinguere in modo accurato le diverse componenti tumorali. Per questo motivo, le immagini \textit{T2} risultano utili se integrate con altre modalità MRI complementari.
+Tale sequenza contribuisce nell'individuazione dell’estensione della lesione, ma è meno specifica rispetto alla sequenza \textit{T1} con mezzo di contrasto, in quanto non consente di distinguere in modo accurato le diverse componenti tumorali. Per questo motivo, le immagini \textit{T2} risultano utili se integrate con altre modalità complementari.
 
 \subsection{FLAIR}
 La sequenza \textit{FLAIR} sopprime il segnale del liquido cerebrospinale, mantenendo alta la visibilità delle anomalie nei tessuti cerebrali.
 
-Essa è utile per localizzare l’edema peritumorale, che appare come una regione iperintensa estesa attorno alla lesione. A differenza della sequenza \textit{T1} con mezzo di contrasto che evidenzia la componente tumorale attiva, la \textit{FLAIR} consente di osservare l’estensione complessiva del tumore, includendo anche le aree non attive.
+Essa è utile per localizzare l’edema peritumorale, che appare come una regione iperintensa estesa attorno alla lesione. A differenza della sequenza \textit{T1} con mezzo di contrasto, che evidenzia la componente tumorale attiva, la \textit{FLAIR} consente di osservare l’estensione complessiva del tumore, includendo anche le aree non attive.
 
 \section{Fusione Multimodale}
 Come descritto, l’integrazione di più modalità MRI permette di migliorare le prestazioni degli algoritmi di segmentazione. Tuttavia, ciascuna sequenza presenta vantaggi e limitazioni specifiche.

@@ -57,11 +57,11 @@ Rappresenta uno dei migliori risultati ottenuti dalla pipeline, con \textit{Dice
     \label{fig:res_128}
 \end{figure}
 
-Dalla Figura~\ref{fig:res_128} si osserva che la segmentazione ottenuta con \textit{Fusion3} presenta una sovrapposizione quasi completa con la ground truth, seguendo con buona precisione la forma della lesione.
+Dalla Figura~\ref{fig:res_128} si osserva che la segmentazione ottenuta con \textit{Fusion3} presenta una sovrapposizione quasi completa con la \textit{ground truth}, seguendo con buona precisione la forma della lesione.
 
 Inizialmente, la lesione appare distinta dal tessuto circostante nella rappresentazione multimodale, facilitando la fase iniziale di sogliatura con Otsu. In questo caso, la combinazione tra \textit{FLAIR} e \textit{T2} valorizza l’estensione della lesione, mentre il contributo ambiguo della \textit{T1c} viene attenuato dalla presenza delle altre modalità. Di conseguenza, la maschera generata su \textit{Fusion3} risulta più vicina alla reale distribuzione del tumore rispetto a \textit{Fusion2}.
 
-Inoltre, la seed map costruita sulla fusione multimodale localizza il seme in una regione interna alla lesione. Questo rende più efficace il Region Growing, che può espandersi in una zona coerente dal punto di vista dell’intensità e della continuità spaziale. Il \textit{Marker-Controlled Watershed} riesce, quindi, a rifinire il contorno senza alterazioni.
+Inoltre, la \textit{seed map} costruita sulla fusione multimodale localizza il seme in una regione interna alla lesione. Questo rende più efficace il \textit{Region Growing}, che può espandersi in una zona coerente dal punto di vista dell’intensità e della continuità spaziale. Il \textit{Marker-Controlled Watershed} riesce, quindi, a rifinire il contorno senza alterazioni.
 
 Anche la sola sequenza \textit{FLAIR} fornisce un buon risultato, con Dice pari a \(0.879\), mentre la \textit{T2} raggiunge una prestazione intermedia (\(0.645\)). Al contrario, la \textit{T1c} risulta inadeguata, con Dice pari a \(0.048\), poiché produce una segmentazione estesa lungo una fascia orizzontale dell’immagine. Anche \textit{Fusion2} risente di questo comportamento anomalo della \textit{T1c} e ottiene un Dice molto basso (\(0.318\)).
 
@@ -77,9 +77,9 @@ Mostra una prestazione eccellente, con \textit{Dice Score} pari a \(0.963\) sull
 
 Come evidenziato in Figura~\ref{fig:res_248}, la lesione presenta una forma compatta e distinguibile dalle zone circostanti. In tal caso \textit{FLAIR}, \textit{Fusion2} e \textit{Fusion3} riescono a produrre buone segmentazioni. La \textit{FLAIR} raggiunge un Dice pari a \(0.974\), superiore anche alla fusione trimodale, mentre \textit{Fusion2} ottiene \(0.967\) e \textit{Fusion3} \(0.963\).
 
-Il motivo di queste prestazioni elevate risiede nel fatto che, nel paziente considerato, la lesione è ben rappresentata nella sequenza \textit{FLAIR} e, dunque, la sogliatura con Otsu riesce a individuare una regione iniziale già molto vicina alla ground truth. Il \textit{Region Growing} si sviluppa, dunque, attorno a un seme ottimale e il \textit{Marker-Controlled Watershed} beneficia dei contorni regolari e continui del tumore.
+Il motivo di queste prestazioni elevate risiede nel fatto che, nel paziente considerato, la lesione è ben rappresentata nella sequenza \textit{FLAIR} e, dunque, la sogliatura con Otsu riesce a individuare una regione iniziale già molto vicina alla \textit{ground truth}. Il \textit{Region Growing} si sviluppa, dunque, attorno a un seme ottimale e il \textit{Marker-Controlled Watershed} beneficia dei contorni regolari e continui del tumore.
 
-Le modalità \textit{T1c} e \textit{T2}, se considerate singolarmente, risultano meno efficaci. La \textit{T1c} produce una segmentazione più contenuta rispetto alla ground truth, mentre la \textit{T2} introduce regioni non coerenti con l'estensione reale della lesione. Tuttavia, quando le informazioni vengono combinate nella fusione multimodale, non compromettono il risultato complessivo.
+Le modalità \textit{T1c} e \textit{T2}, se considerate singolarmente, risultano meno efficaci. La \textit{T1c} produce una segmentazione più contenuta rispetto alla \textit{ground truth}, mentre la \textit{T2} introduce regioni non coerenti con l'estensione reale della lesione. Tuttavia, quando le informazioni vengono combinate nella fusione multimodale, non compromettono il risultato complessivo.
 
 \subsection{Casi Peggiori}
 
@@ -93,9 +93,9 @@ Rappresenta uno degli esempi più critici della pipeline, con \textit{Dice Score
     \label{fig:res_140}
 \end{figure}
 
-Dalla Figura~\ref{fig:res_140} si osserva che la ground truth occupa una regione ampia e irregolare a sinistra dell’immagine, mentre la segmentazione ottenuta con \textit{Fusion3} viene localizzata in una zona spostata verso destra. Di conseguenza, non si verifica alcuna sovrapposizione tra predizione e riferimento e il \textit{Dice Score} risulta nullo.
+Dalla Figura~\ref{fig:res_140} si osserva che la \textit{ground truth} occupa una regione ampia e irregolare a sinistra dell’immagine, mentre la segmentazione ottenuta con \textit{Fusion3} viene localizzata in una zona spostata verso destra. Di conseguenza, non si verifica alcuna sovrapposizione tra predizione e riferimento e il \textit{Dice Score} risulta nullo.
 
-La \textit{Fusion3} genera una distribuzione di intensità che non valorizza la lesione reale, ma una regione differente dell’immagine. Ciò influisce sulla fase di sogliatura con Otsu, che produce una maschera preliminare non coerente con la posizione del tumore. Di conseguenza, anche la seed map tende a individuare un seme iniziale in una zona non pertinente.
+La \textit{Fusion3} genera una distribuzione di intensità che non valorizza la lesione reale, ma una regione differente dell’immagine. Ciò influisce sulla fase di sogliatura con Otsu, che produce una maschera preliminare non coerente con la posizione del tumore. Di conseguenza, anche la \textit{seed map} tende a individuare un seme iniziale in una zona non pertinente.
 
 Selezionando un seme errato, l’intera fase di \textit{Region Growing} si sviluppa attorno a una regione sbagliata. Il \textit{Marker-Controlled Watershed} non è in grado di correggere un errore di localizzazione così marcato, poiché lavora sulla maschera preliminare costruita nelle fasi precedenti. Il post-processing morfologico può soltanto regolarizzare la maschera prodotta, ma non recuperarne la posizione corretta.
 
@@ -111,6 +111,6 @@ Un ulteriore caso di fallimento completo è rappresentato dal paziente \textit{B
     \label{fig:res_380}
 \end{figure}
 
-Come mostrato in Figura~\ref{fig:res_380}, la ground truth è posizionata in una piccola regione nella parte inferiore dell’immagine, mentre le predizioni prodotte dalla pipeline risultano assenti oppure collocate lateralmente. In nessun caso si realizza una sovrapposizione sufficiente con la ground truth.
+Come mostrato in Figura~\ref{fig:res_380}, la \textit{ground truth} è posizionata in una piccola regione nella parte inferiore dell’immagine, mentre le predizioni prodotte dalla pipeline risultano assenti oppure collocate lateralmente. In nessun caso si realizza una sovrapposizione sufficiente con la \textit{ground truth}.
 
-Il fallimento è dovuto alle caratteristiche intrinseche della lesione, che appare piccola e poco evidente rispetto al contesto circostante. Una configurazione di questo tipo rende complicata la fase di sogliatura iniziale, poiché il tumore e il tessuto sano non presentano livelli di intensità nettamente separabili nell'istogramma. Inoltre, anche la generazione della seed map diventa meno affidabile, dato che la sfocatura gaussiana privilegia aree a intensità più marcata che non coincidono con una lesione piccola e poco contrastata.
+Il fallimento è dovuto alle caratteristiche intrinseche della lesione, che appare piccola e poco evidente rispetto al contesto circostante. Una configurazione di questo tipo rende complicata la fase di sogliatura iniziale, poiché il tumore e il tessuto sano non presentano livelli di intensità nettamente separabili nell'istogramma. Inoltre, anche la generazione della \textit{seed map} diventa meno affidabile, dato che la sfocatura gaussiana privilegia aree a intensità più marcata che non coincidono con una lesione piccola e poco contrastata.
