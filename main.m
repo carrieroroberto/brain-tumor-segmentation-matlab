@@ -1,7 +1,6 @@
 %% Segmentazione di Tumori Cerebrali in Immagini MRI: Analisi Comparativa tra Approccio Monomodale e Multimodale
 % Studente: Roberto Carriero - Matricola: 601240
 % Esame: Image Processing - A.A. 2025/2026
-% Docente: Prof. Ing. Andrea Guerriero
 
 %% File: main.m
 % Script principale che gestisce l'intera pipeline di segmentazione.
