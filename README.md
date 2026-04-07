@@ -6,6 +6,9 @@
 - **Program:** M.Sc. Computer Science Engineering (Artificial Intelligence and Data Science) - Politecnico di Bari
 
 ---
+<img width="1343" height="808" alt="248_comparison_results" src="https://github.com/user-attachments/assets/94869f72-fb18-431b-86f6-f6ef7e881e0b" />
+
+---
 
 ## Project Overview
 
