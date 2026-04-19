@@ -22,7 +22,7 @@ Fusion3 & 0.806 & 0.744 & 0.935 \\
 \end{table}
 
 È possibile notare come la configurazione \textit{Fusion3} (\textit{FLAIR}+T1c+\textit{T2}) ottenga le migliori prestazioni complessive, con valori medi pari a \textit{Dice Score} \(= 0.806\), \textit{Sensitivity} \(= 0.744\) e \textit{Precision} \(= 0.935\).
-La seconda configurazione più efficace risulta essere \textit{FLAIR}, con Dice medio pari a \(0.795\), seguita da \textit{Fusion2} con Dice medio pari a \(0.755\). La sequenza \textit{T2}, invece, presenta prestazioni inferiori con Dice medio pari a \(0.520\), mentre la \textit{T1c} è la configurazione meno affidabile in singolo, con Dice medio pari a \(0.195\).
+La seconda configurazione più efficace risulta essere \textit{FLAIR}, con \textit{Dice} medio pari a \(0.795\), seguita da \textit{Fusion2} con \textit{Dice} medio pari a \(0.755\). La sequenza \textit{T2}, invece, presenta prestazioni inferiori con \textit{Dice} medio pari a \(0.520\), mentre la \textit{T1c} è la configurazione meno affidabile in singolo, con \textit{Dice} medio pari a \(0.195\).
 
 Nel complesso, i risultati confermano che la fusione multimodale, e in particolare quella trimodale adottata in \textit{Fusion3}, rappresenta la soluzione migliore tra quelle analizzate.
 
@@ -63,7 +63,7 @@ Inizialmente, la lesione appare distinta dal tessuto circostante nella rappresen
 
 Inoltre, la \textit{seed map} costruita sulla fusione multimodale localizza il seme in una regione interna alla lesione. Questo rende più efficace il \textit{Region Growing}, che può espandersi in una zona coerente dal punto di vista dell’intensità e della continuità spaziale. Il \textit{Marker-Controlled Watershed} riesce, quindi, a rifinire il contorno senza alterazioni.
 
-Anche la sola sequenza \textit{FLAIR} fornisce un buon risultato, con Dice pari a \(0.879\), mentre la \textit{T2} raggiunge una prestazione intermedia (\(0.645\)). Al contrario, la \textit{T1c} risulta inadeguata, con Dice pari a \(0.048\), poiché produce una segmentazione estesa lungo una fascia orizzontale dell’immagine. Anche \textit{Fusion2} risente di questo comportamento anomalo della \textit{T1c} e ottiene un Dice molto basso (\(0.318\)).
+Anche la sola sequenza \textit{FLAIR} fornisce un buon risultato, con \textit{Dice} pari a \(0.879\), mentre la \textit{T2} raggiunge una prestazione intermedia (\(0.645\)). Al contrario, la \textit{T1c} risulta inadeguata, con \textit{Dice} pari a \(0.048\), poiché produce una segmentazione estesa lungo una fascia orizzontale dell’immagine. Anche \textit{Fusion2} risente di questo comportamento anomalo della \textit{T1c} e ottiene un \textit{Dice} molto basso (\(0.318\)).
 
 \paragraph{BRATS\_248.nii.gz}
 Mostra una prestazione eccellente, con \textit{Dice Score} pari a \(0.963\) sulla configurazione \textit{Fusion3}.
@@ -75,7 +75,7 @@ Mostra una prestazione eccellente, con \textit{Dice Score} pari a \(0.963\) sull
     \label{fig:res_248}
 \end{figure}
 
-Come evidenziato in Figura~\ref{fig:res_248}, la lesione presenta una forma compatta e distinguibile dalle zone circostanti. In tal caso \textit{FLAIR}, \textit{Fusion2} e \textit{Fusion3} riescono a produrre buone segmentazioni. La \textit{FLAIR} raggiunge un Dice pari a \(0.974\), superiore anche alla fusione trimodale, mentre \textit{Fusion2} ottiene \(0.967\) e \textit{Fusion3} \(0.963\).
+Come evidenziato in Figura~\ref{fig:res_248}, la lesione presenta una forma compatta e distinguibile dalle zone circostanti. In tal caso \textit{FLAIR}, \textit{Fusion2} e \textit{Fusion3} riescono a produrre buone segmentazioni. La \textit{FLAIR} raggiunge un \textit{Dice} pari a \(0.974\), superiore anche alla fusione trimodale, mentre \textit{Fusion2} ottiene \(0.967\) e \textit{Fusion3} \(0.963\).
 
 Il motivo di queste prestazioni elevate risiede nel fatto che, nel paziente considerato, la lesione è ben rappresentata nella sequenza \textit{FLAIR} e, dunque, la sogliatura con Otsu riesce a individuare una regione iniziale già molto vicina alla \textit{ground truth}. Il \textit{Region Growing} si sviluppa, dunque, attorno a un seme ottimale e il \textit{Marker-Controlled Watershed} beneficia dei contorni regolari e continui del tumore.
 
