@@ -26,10 +26,12 @@ function mask = region_growing(I, seedY, seedX, thresh)
     Q_col = zeros(max_pixels, 1);
     
     % inizializzazione dei puntatori per la gestione della coda (head: estrazione, tail: inserimento)
-    head = 1; tail = 1;
+    head = 1;
+    tail = 1;
     
     % accodamento delle coordinate del seed iniziale come punto di partenza dell'algoritmo
-    Q_row(tail) = seedY; Q_col(tail) = seedX;
+    Q_row(tail) = seedY;
+    Q_col(tail) = seedX;
     tail = tail + 1;
     
     % marcatura del seed iniziale come appartenente alla regione tumorale e già analizzato
