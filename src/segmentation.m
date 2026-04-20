@@ -29,21 +29,28 @@ function mask_clean = segmentation(I_proc, seed_map, seq_name, filename)
     thresh_rg = prctile(I_proc(mask_otsu), 6);
     mask_rg = region_growing(I_proc, seedY, seedX, thresh_rg);
     
-    % costruzione del bacino topografico con trasformata della distanza inversa
-    D = -bwdist(~mask_rg);
+    % calcolo del gradiente dell'immagine
+    [Gmag, ~] = imgradient(I_proc);
     
-    % imposizione dei minimi locali per forzare l'algoritmo watershed sui marker di Otsu
-    D_mod = imimposemin(D, mask_otsu);
+    % dilata il Region Growing di 5 pixel, per creare uno spazio in cui rifinire il bordo
+    se = strel("disk", 5);
+    mask_rg_dilated = imdilate(mask_rg, se);
     
-    % esecuzione dell'algoritmo Watershed
+    % definisce i marcatori di sfondo
+    bg_marker = ~mask_rg_dilated;
+    
+    % unisce i marcatori interni ed esterni
+    markers = mask_otsu | bg_marker;
+    
+    % impone i minimi nei marcatori individuati
+    D_mod = imimposemin(Gmag, markers);
+    
+    % esegue il Watershed
     L = watershed(D_mod);
     
-    % rimozione dei confini di separazione
-    mask_raw = mask_rg;
-    mask_raw(L == 0) = 0;
-    
-    % isolamento della componente morfologica connessa contenente il seed iniziale
-    mask_raw = bwselect(mask_raw, seedX, seedY, 8);
+    % il tumore è il bacino in cui si trova la coordinata del seme iniziale
+    id_tumore = L(seedY, seedX);
+    mask_raw = (L == id_tumore);
     
     % inizializzazione della figura per il salvataggio dell'analisi
     fig = figure("Visible", "off");
