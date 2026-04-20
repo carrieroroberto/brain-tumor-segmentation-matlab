@@ -35,9 +35,6 @@ function mask_clean = segmentation(I_proc, seed_map, seq_name, filename)
     % imposizione dei minimi locali per forzare l'algoritmo watershed sui marker di Otsu
     D_mod = imimposemin(D, mask_otsu);
     
-    % restrizione del dominio spaziale per prevenire l'allagamento dello sfondo
-    D_mod(~mask_rg) = -Inf;
-    
     % esecuzione dell'algoritmo Watershed
     L = watershed(D_mod);
     
