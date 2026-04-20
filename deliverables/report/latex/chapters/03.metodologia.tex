@@ -263,7 +263,7 @@ dove $\operatorname{bwdist}$ rappresenta la distanza euclidea e $\neg M_{\text{R
 D_{\text{mod}} = \operatorname{imimposemin}(D, M_{\text{Otsu}})
 \]
 
-Per evitare l’espansione verso lo sfondo, la trasformata viene limitata ponendo a $-\infty$ i valori esterni all'area considerata. Infine, i bordi di separazione ottenuti vengono rimossi e viene selezionata esclusivamente la componente connessa contenente il seme iniziale, ovvero la regione tumorale.
+I bordi di separazione ottenuti vengono rimossi e viene selezionata esclusivamente la componente connessa contenente il seme iniziale, ovvero la regione tumorale.
 
 \paragraph{Risultati intermedi della segmentazione}
 Per ciascuna configurazione analizzata, viene salvata una figura che riassume i passaggi della pipeline, tra cui la maschera ottenuta con \textit{Otsu} (in giallo), l'espansione del \textit{Region Growing} (in ciano), il risultato del \textit{Watershed} (in magenta) e la maschera finale non rifinita (in rosso), come riportato di seguito.
